@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project - Кликер</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Экран кликера -->
+        <div id="clicker-screen" class="screen active">
+            <div class="balance-display">
+                <div class="coin-icon">₽</div>
+                <div class="balance-amount" id="p-balance">0</div>
+            </div>
+            
+            <div class="click-button-container">
+                <button class="click-button" id="main-click">
+                    <span class="coin-text">₽</span>
+                </button>
+            </div>
+            
+            <div class="floating-coins" id="floating-coins"></div>
+        </div>
+
+        <!-- Экран сундуков -->
+        <div id="chests-screen" class="screen">
+            <div class="chests-header">
+                <button class="ad-button" id="watch-ad">Смотреть рекламу</button>
+                <div class="ad-count" id="ad-count">0/3</div>
+            </div>
+            
+            <div class="chests-grid">
+                <div class="chest-card" data-rarity="rare">
+                    <div class="chest-image">📦</div>
+                    <div class="chest-name">Редкий</div>
+                    <div class="chest-cost">3 рекламы</div>
+                    <div class="chest-reward">10-100 Ж | 100-200 ₽</div>
+                </div>
+                
+                <div class="chest-card" data-rarity="epic">
+                    <div class="chest-image">🎁</div>
+                    <div class="chest-name">Эпический</div>
+                    <div class="chest-cost">6 рекламы</div>
+                    <div class="chest-reward">20-150 Ж | 200-300 ₽</div>
+                </div>
+                
+                <div class="chest-card" data-rarity="mythic">
+                    <div class="chest-image">💎</div>
+                    <div class="chest-name">Мифический</div>
+                    <div class="chest-cost">15 рекламы</div>
+                    <div class="chest-reward">40-700 Ж | 500-1000 ₽</div>
+                </div>
+                
+                <div class="chest-card" data-rarity="legendary">
+                    <div class="chest-image">👑</div>
+                    <div class="chest-name">Легендарный</div>
+                    <div class="chest-cost">20 рекламы</div>
+                    <div class="chest-reward">100-1000 Ж | 1000-2000 ₽</div>
+                </div>
+                
+                <div class="chest-card" data-rarity="ultra">
+                    <div class="chest-image">🌟</div>
+                    <div class="chest-name">Ультра</div>
+                    <div class="chest-cost">30 рекламы</div>
+                    <div class="chest-reward">300-5000 Ж</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран рефералов -->
+        <div id="referral-screen" class="screen">
+            <div class="referral-container">
+                <div class="referral-title">Пригласи друзей!</div>
+                <div class="referral-bonus">500 Ж + 300 ₽ за каждого друга</div>
+                
+                <div class="referral-link-container">
+                    <input type="text" id="referral-link" readonly>
+                    <button id="copy-link">Копировать</button>
+                </div>
+                
+                <div class="referral-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Приглашено:</div>
+                        <div class="stat-value" id="referrals-count">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Заработано:</div>
+                        <div class="stat-value" id="referral-earnings">0 ₽</div>
+                    </div>
+                </div>
+                
+                <button class="invite-button" id="invite-friends">Пригласить друзей</button>
+            </div>
+        </div>
+
+        <!-- Экран профиля -->
+        <div id="profile-screen" class="screen">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="user-avatar">👤</div>
+                    <div class="profile-name" id="user-name">Player</div>
+                </div>
+                
+                <div class="balance-stats">
+                    <div class="balance-item">
+                        <div class="balance-label">P монеты:</div>
+                        <div class="balance-value" id="profile-p-balance">0 ₽</div>
+                    </div>
+                    <div class="balance-item">
+                        <div class="balance-label">J монеты:</div>
+                        <div class="balance-value" id="profile-j-balance">0 Ж</div>
+                    </div>
+                </div>
+                
+                <div class="exchange-section">
+                    <div class="exchange-title">Обмен валют</div>
+                    <div class="exchange-rate">10000 ₽ = 100 Ж</div>
+                    <button class="exchange-button" id="exchange-button">Обменять ₽ на Ж</button>
+                </div>
+                
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <div class="stat-label">Всего кликов:</div>
+                        <div class="stat-value" id="total-clicks">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Сундуков открыто:</div>
+                        <div class="stat-value" id="chests-opened">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Навигация -->
+        <div class="bottom-nav">
+            <button class="nav-button active" data-screen="clicker">
+                <span class="nav-icon">👆</span>
+                <span class="nav-label">Кликер</span>
+            </button>
+            <button class="nav-button" data-screen="chests">
+                <span class="nav-icon">📦</span>
+                <span class="nav-label">Сундуки</span>
+            </button>
+            <button class="nav-button" data-screen="referral">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Реферал</span>
+            </button>
+            <button class="nav-button" data-screen="profile">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Профиль</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Модальное окно открытия сундука -->
+    <div id="chest-modal" class="modal">
+        <div class="modal-content">
+            <div class="chest-animation">
+                <div class="chest-icon" id="chest-icon">📦</div>
+            </div>
+            <div class="reward-display">
+                <div class="reward-title">Получено!</div>
+                <div class="reward-coins">
+                    <div class="reward-item">
+                        <span class="reward-amount" id="p-reward">0</span>
+                        <span class="reward-symbol">₽</span>
+                    </div>
+                    <div class="reward-item">
+                        <span class="reward-amount" id="j-reward">0</span>
+                        <span class="reward-symbol">Ж</span>
+                    </div>
+                </div>
+            </div>
+            <button class="modal-close" id="close-modal">Закрыть</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
