@@ -55,10 +55,11 @@ body::before {
     display: flex;
 }
 
-/* Экран кликера */
+/* Экран кликера - убираем синий квадрат */
 #clicker-screen {
     justify-content: space-between;
     align-items: center;
+    background: transparent;
 }
 
 .balance-display {
@@ -71,6 +72,15 @@ body::before {
     border-radius: 20px;
     padding: 15px 30px;
     border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Для старых телефонов - убираем blur */
+@supports not (backdrop-filter: blur(10px)) {
+    .balance-display {
+        background: rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
 }
 
 .coin-icon {
@@ -195,18 +205,49 @@ body::before {
     margin: 0 auto;
 }
 
+/* Сундуки как в Clash of Clans */
 .chest-card {
-    background: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg, #8B4513, #D2691E);
     backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 15px;
     text-align: center;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 3px solid #654321;
     transition: all 0.3s ease;
     cursor: pointer;
-    transform-style: preserve-3d;
-    perspective: 1000px;
     position: relative;
+    box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Для старых телефонов - простые эффекты */
+@supports not (perspective: 1000px) {
+    .chest-card {
+        transform: none;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .chest-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Для новых телефонов - 3D эффекты */
+@supports (perspective: 1000px) {
+    .chest-card {
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+    
+    .chest-card:hover {
+        transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
 }
 
 .chest-card::before {
@@ -216,8 +257,11 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    border-radius: 15px;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(255, 215, 0, 0.1) 50%, 
+        transparent 70%);
+    border-radius: 12px;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -226,48 +270,114 @@ body::before {
     opacity: 1;
 }
 
-.chest-card:hover {
-    transform: translateY(-10px) rotateX(5deg);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+/* Редкость сундуков */
+.chest-card[data-rarity="rare"] { 
+    border-color: #4CAF50; 
+    background: linear-gradient(145deg, #2E7D32, #66BB6A);
 }
 
-.chest-card[data-rarity="rare"] { border-color: #4CAF50; }
-.chest-card[data-rarity="epic"] { border-color: #2196F3; }
-.chest-card[data-rarity="mythic"] { border-color: #9C27B0; }
-.chest-card[data-rarity="legendary"] { border-color: #FF9800; }
-.chest-card[data-rarity="ultra"] { border-color: #F44336; }
+.chest-card[data-rarity="epic"] { 
+    border-color: #2196F3; 
+    background: linear-gradient(145deg, #1565C0, #42A5F5);
+}
 
+.chest-card[data-rarity="mythic"] { 
+    border-color: #9C27B0; 
+    background: linear-gradient(145deg, #7B1FA2, #BA68C8);
+}
+
+.chest-card[data-rarity="legendary"] { 
+    border-color: #FF9800; 
+    background: linear-gradient(145deg, #F57C00, #FFB74D);
+}
+
+.chest-card[data-rarity="ultra"] { 
+    border-color: #F44336; 
+    background: linear-gradient(145deg, #D32F2F, #EF5350);
+}
+
+/* 3D сундук */
 .chest-image {
     font-size: 48px;
     margin-bottom: 10px;
-    transform-style: preserve-3d;
-    transition: transform 0.6s;
-    animation: chestFloat 3s ease-in-out infinite;
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    background: linear-gradient(135deg, #8B4513, #D2691E);
+    border-radius: 10px;
+    border: 2px solid #654321;
+    box-shadow: 
+        0 5px 10px rgba(0, 0, 0, 0.3),
+        inset 0 2px 5px rgba(255, 255, 255, 0.2);
 }
 
-@keyframes chestFloat {
-    0%, 100% { 
-        transform: translateY(0) rotateY(0deg);
+/* Для старых телефонов - простая анимация */
+@supports not (animation: chestFloat 3s ease-in-out) {
+    .chest-image {
+        animation: simplePulse 2s ease-in-out infinite;
     }
-    25% { 
-        transform: translateY(-5px) rotateY(10deg);
+    
+    @keyframes simplePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
     }
-    50% { 
-        transform: translateY(-10px) rotateY(0deg);
+}
+
+/* Для новых телефонов - сложная анимация */
+@supports (animation: chestFloat 3s ease-in-out) {
+    .chest-image {
+        animation: chestFloat 3s ease-in-out infinite;
+        transform-style: preserve-3d;
     }
-    75% { 
-        transform: translateY(-5px) rotateY(-10deg);
+    
+    @keyframes chestFloat {
+        0%, 100% { 
+            transform: translateY(0) rotateY(0deg) scale(1);
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+        }
+        25% { 
+            transform: translateY(-3px) rotateY(5deg) scale(1.02);
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.4));
+        }
+        50% { 
+            transform: translateY(-5px) rotateY(0deg) scale(1.05);
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+        }
+        75% { 
+            transform: translateY(-3px) rotateY(-5deg) scale(1.02);
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.4));
+        }
     }
 }
 
 .chest-card:hover .chest-image {
-    animation: chestSpin 0.6s ease-in-out;
+    animation: chestShake 0.5s ease-in-out;
 }
 
-@keyframes chestSpin {
-    0% { transform: rotateY(0deg) scale(1); }
-    50% { transform: rotateY(180deg) scale(1.2); }
-    100% { transform: rotateY(360deg) scale(1); }
+@keyframes chestShake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+    75% { transform: rotate(-3deg); }
+}
+
+/* Искры для новых телефонов */
+@supports (filter: drop-shadow(0 0 10px gold)) {
+    .chest-image::after {
+        content: '✨';
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        font-size: 16px;
+        animation: sparkle 2s ease-in-out infinite;
+    }
+    
+    @keyframes sparkle {
+        0%, 100% { opacity: 0; transform: scale(0); }
+        50% { opacity: 1; transform: scale(1); }
+    }
 }
 
 .chest-name {
@@ -513,7 +623,7 @@ body::before {
     font-size: 12px;
 }
 
-/* Модальное окно */
+/* Модальное окно - оптимизация для всех телефонов */
 .modal {
     display: none;
     position: fixed;
@@ -539,6 +649,15 @@ body::before {
     max-width: 300px;
     width: 90%;
     border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Для старых телефонов */
+@supports not (backdrop-filter: blur(10px)) {
+    .modal-content {
+        background: #667eea;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
 }
 
 .chest-animation {
@@ -548,17 +667,36 @@ body::before {
 .chest-icon {
     font-size: 60px;
     animation: chestBounce 0.5s ease infinite alternate;
-    transform-style: preserve-3d;
 }
 
-@keyframes chestBounce {
-    0% { 
-        transform: translateY(0) rotateY(0deg) scale(1);
-        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+/* Простая анимация для старых телефонов */
+@supports not (animation: chestBounce 0.5s ease) {
+    .chest-icon {
+        animation: simpleBounce 1s ease-in-out infinite alternate;
     }
-    100% { 
-        transform: translateY(-15px) rotateY(180deg) scale(1.1);
-        filter: drop-shadow(0 5px 20px rgba(255, 215, 0, 0.8));
+    
+    @keyframes simpleBounce {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-10px); }
+    }
+}
+
+/* Сложная анимация для новых телефонов */
+@supports (animation: chestBounce 0.5s ease) {
+    .chest-icon {
+        animation: chestBounce 0.5s ease infinite alternate;
+        transform-style: preserve-3d;
+    }
+    
+    @keyframes chestBounce {
+        0% { 
+            transform: translateY(0) rotateY(0deg) scale(1);
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+        }
+        100% { 
+            transform: translateY(-15px) rotateY(180deg) scale(1.1);
+            filter: drop-shadow(0 5px 20px rgba(255, 215, 0, 0.8));
+        }
     }
 }
 
