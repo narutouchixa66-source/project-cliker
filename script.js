@@ -220,9 +220,18 @@ function openChest(rarity) {
         return;
     }
     
-    // Генерируем награды
-    const pReward = Math.floor(Math.random() * (chestData.pMax - chestData.pMin + 1)) + chestData.pMin;
-    const jReward = Math.floor(Math.random() * (chestData.jMax - chestData.jMin + 1)) + chestData.jMin;
+    // Выбираем тип награды (50/50 шанс)
+    const isPCoins = Math.random() < 0.5;
+    let pReward = 0;
+    let jReward = 0;
+    
+    if (isPCoins) {
+        // Даем только P монеты
+        pReward = Math.floor(Math.random() * (chestData.pMax - chestData.pMin + 1)) + chestData.pMin;
+    } else {
+        // Даем только J монеты
+        jReward = Math.floor(Math.random() * (chestData.jMax - chestData.jMin + 1)) + chestData.jMin;
+    }
     
     // Начисляем награды
     userData.pBalance += pReward;
@@ -256,11 +265,23 @@ function showChestModal(rarity, pReward, jReward) {
     const chestIcon = document.getElementById('chest-icon');
     const pRewardEl = document.getElementById('p-reward');
     const jRewardEl = document.getElementById('j-reward');
+    const rewardTitle = document.querySelector('.reward-title');
     
     const chestData = getChestData(rarity);
     chestIcon.textContent = chestData.icon;
     pRewardEl.textContent = pReward;
     jRewardEl.textContent = jReward;
+    
+    // Показываем только одну награду
+    if (pReward > 0) {
+        rewardTitle.textContent = 'Получены P монеты!';
+        pRewardEl.parentElement.style.display = 'flex';
+        jRewardEl.parentElement.style.display = 'none';
+    } else {
+        rewardTitle.textContent = 'Получены J монеты!';
+        pRewardEl.parentElement.style.display = 'none';
+        jRewardEl.parentElement.style.display = 'flex';
+    }
     
     modal.classList.add('active');
 }
