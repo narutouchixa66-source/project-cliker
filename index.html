@@ -18,10 +18,26 @@
                 <div class="balance-amount" id="p-balance">0</div>
             </div>
             
+            <div class="level-display">
+                <div class="level-info">
+                    <div class="level-text" id="user-level">Уровень 1</div>
+                    <div class="exp-bar">
+                        <div class="exp-fill" id="exp-fill"></div>
+                    </div>
+                    <div class="exp-text" id="user-exp">0/100</div>
+                </div>
+            </div>
+            
             <div class="click-button-container">
                 <button class="click-button" id="main-click">
                     <span class="coin-text">₽</span>
                 </button>
+                <div class="click-power" id="click-power">Сила: 1₽</div>
+            </div>
+            
+            <div class="bonus-buttons">
+                <button class="bonus-button" id="daily-bonus">🎁 Ежедневный</button>
+                <button class="bonus-button" id="hourly-bonus">⏰ Часовой</button>
             </div>
             
             <div class="floating-coins" id="floating-coins"></div>
@@ -104,6 +120,7 @@
                 <div class="profile-header">
                     <div class="profile-avatar" id="user-avatar">👤</div>
                     <div class="profile-name" id="user-name">Player</div>
+                    <div class="profile-level" id="profile-level">Уровень 1</div>
                 </div>
                 
                 <div class="balance-stats">
@@ -115,12 +132,41 @@
                         <div class="balance-label">J монеты:</div>
                         <div class="balance-value" id="profile-j-balance">0 Ж</div>
                     </div>
+                    <div class="balance-item">
+                        <div class="balance-label">Всего заработано:</div>
+                        <div class="balance-value" id="total-earned">0 ₽</div>
+                    </div>
                 </div>
                 
                 <div class="exchange-section">
-                    <div class="exchange-title">Обмен валют</div>
+                    <div class="exchange-title">Обмен и вывод</div>
                     <div class="exchange-rate">10000 ₽ = 100 Ж</div>
+                    <div class="exchange-rate">100000 Ж = 1 TON</div>
+                    <div class="exchange-rate">Мин. вывод: 100 Ж = 0.001 TON</div>
                     <button class="exchange-button" id="exchange-button">Обменять ₽ на Ж</button>
+                    <button class="exchange-button" id="withdraw-button">Вывести TON</button>
+                </div>
+                
+                <div class="shop-section">
+                    <div class="shop-title">Магазин улучшений</div>
+                    <div class="shop-grid">
+                        <button class="shop-item" data-item="click_power_2">
+                            <div class="item-name">x2 Сила клика</div>
+                            <div class="item-cost">1000 ₽</div>
+                        </button>
+                        <button class="shop-item" data-item="auto_clicker_1">
+                            <div class="item-name">Автокликер 1</div>
+                            <div class="item-cost">500 ₽</div>
+                        </button>
+                        <button class="shop-item" data-item="multiplier_2">
+                            <div class="item-name">x2 Множитель</div>
+                            <div class="item-cost">15000 Ж</div>
+                        </button>
+                        <button class="shop-item" data-item="premium_day">
+                            <div class="item-name">Премиум на день</div>
+                            <div class="item-cost">100 Ж</div>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="stats-section">
@@ -132,6 +178,24 @@
                         <div class="stat-label">Сундуков открыто:</div>
                         <div class="stat-value" id="chests-opened">0</div>
                     </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Достижений:</div>
+                        <div class="stat-value" id="achievements-count">0/14</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Автокликеры:</div>
+                        <div class="stat-value" id="auto-clickers-count">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Экран достижений -->
+        <div id="achievements-screen" class="screen">
+            <div class="achievements-container">
+                <div class="achievements-title">🏆 Достижения</div>
+                <div class="achievements-grid" id="achievements-grid">
+                    <!-- Достижения будут добавлены через JS -->
                 </div>
             </div>
         </div>
@@ -153,6 +217,10 @@
             <button class="nav-button" data-screen="profile">
                 <span class="nav-icon">👤</span>
                 <span class="nav-label">Профиль</span>
+            </button>
+            <button class="nav-button" data-screen="achievements">
+                <span class="nav-icon">🏆</span>
+                <span class="nav-label">Достижения</span>
             </button>
         </div>
     </div>
